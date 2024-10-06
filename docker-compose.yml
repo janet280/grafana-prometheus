@@ -1,0 +1,36 @@
+services:
+  prometheus:
+    image: prom/prometheus:latest
+    command: --config.file=/etc/prometheus/prometheus.yml
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+      - ./prometheus-data:/prometheus
+    ports:
+      - "9090:9090"
+
+  grafana:
+    image: grafana/grafana:latest
+    volumes:
+      - ./grafana-data:/var/lib/grafana
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SERVER_ROOT_URL=http://localhost:3000
+      - GF_SERVER_ADMIN_USER=admin
+      - GF_SERVER_ADMIN_PASSWORD_FILE=/run/secrets/gfdbadmin
+    secrets:
+      - gfdbadmin
+
+  blackbox-exporter:
+    image: prom/blackbox-exporter
+    volumes:
+      - ./blackbox-exporter-config:/etc/blackbox_exporter/config
+    command: --config.file=/etc/blackbox_exporter/config/blackbox.yml
+    ports:
+      - "9118:9118"
+    environment:
+      - BLACKBOX_EXPORTER_CONFIG_FILE=/etc/blackbox_exporter/config/blackbox.yml
+    restart: always
+secrets:
+  gfdbadmin:
+    file: ./gfdbadmin.txt

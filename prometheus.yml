@@ -1,0 +1,13 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+scrape_configs:
+  - job_name: 'flashphoner'
+    metrics_path: '/'
+    params:
+      action: [stat]
+      format: [prometheus]
+    static_configs:
+      - targets: ['webstreamer43.autoremarketers.com:8081','webstreamer42.autoremarketers.com:8081','webstreamer41.autoremarketers.com:8081']
+
